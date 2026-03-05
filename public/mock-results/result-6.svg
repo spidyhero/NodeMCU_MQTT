@@ -1,0 +1,13 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1024" height="1024" fill="#18181B"/>
+  <rect x="90" y="90" width="844" height="844" rx="44" fill="url(#g6)"/>
+  <path d="M220 760L420 300L620 760L820 300" stroke="#51E674" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="510" cy="250" r="90" fill="#A7F3D0"/>
+  <text x="150" y="900" fill="#FAFAFA" font-family="Arial" font-size="48">THAREEA MOCK #6</text>
+  <defs>
+    <linearGradient id="g6" x1="90" y1="90" x2="934" y2="934" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#27272A"/>
+      <stop offset="1" stop-color="#3F3F46"/>
+    </linearGradient>
+  </defs>
+</svg>

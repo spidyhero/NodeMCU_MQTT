@@ -1,0 +1,179 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum Role {
+  ARTIST
+  BUYER
+}
+
+enum ModelStatus {
+  DRAFT
+  TRAINING
+  READY
+}
+
+enum BaseModel {
+  SD
+  FLUX
+}
+
+enum GenerationStatus {
+  QUEUED
+  DONE
+  FAILED
+}
+
+enum TransactionType {
+  CREDIT_PURCHASE
+  GENERATION_FEE
+  ARTWORK_PURCHASE
+}
+
+enum LicenseType {
+  STANDARD
+  COMMERCIAL
+}
+
+model User {
+  id         String         @id @default(cuid())
+  name       String
+  email      String         @unique
+  passwordHash String
+  role       Role
+  createdAt  DateTime       @default(now())
+
+  artistProfile ArtistProfile?
+  artistArtworks Artwork[]   @relation("ArtistArtworks")
+  artistModels   Model[]     @relation("ArtistModels")
+  buyerJobs      GenerationJob[] @relation("BuyerJobs")
+  artistJobs     GenerationJob[] @relation("ArtistJobs")
+  wallet         CreditWallet?
+  buyerTransactions Transaction[] @relation("BuyerTransactions")
+  artistTransactions Transaction[] @relation("ArtistTransactions")
+  buyerReceipts   LicenseReceipt[] @relation("BuyerReceipts")
+  artistReceipts  LicenseReceipt[] @relation("ArtistReceipts")
+  ownershipProof  OwnershipProof?
+}
+
+model ArtistProfile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  slug        String   @unique
+  displayName String
+  bio         String
+  avatarUrl   String?
+  bannerUrl   String?
+  socialLinks Json?
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Artwork {
+  id          String   @id @default(cuid())
+  artistId    String
+  title       String
+  description String
+  imageUrl    String
+  tags        Json?
+  price       Int?
+  isForSale   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  artist User @relation("ArtistArtworks", fields: [artistId], references: [id], onDelete: Cascade)
+}
+
+model Model {
+  id         String      @id @default(cuid())
+  artistId   String
+  name       String
+  status     ModelStatus @default(DRAFT)
+  baseModel  BaseModel
+  loraConfig Json?
+  version    String
+  createdAt  DateTime    @default(now())
+
+  artist User @relation("ArtistModels", fields: [artistId], references: [id], onDelete: Cascade)
+}
+
+model CreditWallet {
+  id         String   @id @default(cuid())
+  userId     String   @unique
+  balanceInt Int      @default(0)
+  updatedAt  DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model GenerationJob {
+  id             String           @id @default(cuid())
+  buyerId        String
+  artistId       String
+  prompt         String
+  negativePrompt String?
+  status         GenerationStatus @default(QUEUED)
+  outputImageUrl String?
+  metadata       Json?
+  createdAt      DateTime         @default(now())
+
+  buyer       User            @relation("BuyerJobs", fields: [buyerId], references: [id], onDelete: Cascade)
+  artist      User            @relation("ArtistJobs", fields: [artistId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+  receipt     LicenseReceipt?
+}
+
+model Transaction {
+  id        String          @id @default(cuid())
+  type      TransactionType
+  amountInt Int
+  buyerId   String
+  artistId  String?
+  jobId     String?
+  createdAt DateTime        @default(now())
+
+  buyer  User          @relation("BuyerTransactions", fields: [buyerId], references: [id], onDelete: Cascade)
+  artist User?         @relation("ArtistTransactions", fields: [artistId], references: [id], onDelete: Cascade)
+  job    GenerationJob? @relation(fields: [jobId], references: [id], onDelete: SetNull)
+  split  RevenueSplit?
+}
+
+model RevenueSplit {
+  id               String   @id @default(cuid())
+  transactionId    String   @unique
+  platformShareInt Int
+  artistShareInt   Int
+  buyerCostInt     Int
+  createdAt        DateTime @default(now())
+
+  transaction Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+}
+
+model LicenseReceipt {
+  id          String      @id @default(cuid())
+  buyerId     String
+  artistId    String
+  jobId       String      @unique
+  licenseType LicenseType
+  termsText   String
+  issuedAt    DateTime    @default(now())
+
+  buyer  User          @relation("BuyerReceipts", fields: [buyerId], references: [id], onDelete: Cascade)
+  artist User          @relation("ArtistReceipts", fields: [artistId], references: [id], onDelete: Cascade)
+  job    GenerationJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
+}
+
+model OwnershipProof {
+  id             String   @id @default(cuid())
+  artistId       String   @unique
+  datasetHash    String
+  watermarkKey   String
+  fingerprintKey String
+  createdAt      DateTime @default(now())
+
+  artist User @relation(fields: [artistId], references: [id], onDelete: Cascade)
+}
