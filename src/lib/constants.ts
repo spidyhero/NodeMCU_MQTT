@@ -1,0 +1,6 @@
+export const APP_NAME = "THAREEA AI";
+export const PRIMARY_COLOR = "#51E674";
+export const CREDIT_SCALE = 100;
+export const GENERATION_COST_INT = 100;
+export const GENERATION_ARTIST_SHARE_PERCENT = 70;
+export const GENERATION_PLATFORM_SHARE_PERCENT = 30;

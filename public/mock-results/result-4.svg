@@ -1,0 +1,14 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1024" height="1024" fill="#0B1120"/>
+  <rect x="88" y="88" width="848" height="848" rx="52" fill="url(#g4)"/>
+  <path d="M180 300H844" stroke="#93C5FD" stroke-width="24" stroke-linecap="round"/>
+  <path d="M180 500H844" stroke="#51E674" stroke-width="24" stroke-linecap="round"/>
+  <path d="M180 700H844" stroke="#F8FAFC" stroke-width="24" stroke-linecap="round"/>
+  <text x="160" y="900" fill="#E2E8F0" font-family="Arial" font-size="48">THAREEA MOCK #4</text>
+  <defs>
+    <linearGradient id="g4" x1="88" y1="88" x2="936" y2="936" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#111827"/>
+      <stop offset="1" stop-color="#1E293B"/>
+    </linearGradient>
+  </defs>
+</svg>
